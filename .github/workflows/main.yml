@@ -1,0 +1,33 @@
+name: NEBULA-AI 24/7 Deployment
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: |
+          npm install mineflayer mineflayer-pathfinder @google/generative-ai
+          
+      - name: Start NEBULA-AI
+        env:
+          # من السكرت (Secrets)
+          MC_HOST: ${{ secrets.MC_HOST }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # من المتغيرات (Variables)
+          MC_PORT: ${{ vars.MC_PORT }}
+          MC_USER: ${{ vars.MC_USER }}
+          MC_VERSION: ${{ vars.MC_VERSION }}
+        run: node src/index.js
